@@ -1,4 +1,4 @@
-# Besh
+# Besh [![Build Status](https://travis-ci.org/archan937/besh.svg?branch=master)](http://travis-ci.org/archan937/besh)
 
 Transpile Elixir scripts to Bash scripts
 
