@@ -7,6 +7,10 @@ defmodule BeshTest do
     """)
   end
 
+  test "transpiles write.ex" do
+    assert_transpiles("write", "Hello world")
+  end
+
   test "transpiles variables.ex" do
     assert_transpiles("variables", """
     '1'
