@@ -2,17 +2,91 @@
 
 Transpile Elixir scripts to Bash scripts
 
+## Features
+
+As you might have guessed Besh only transpiles a small fraction of what the beautiful Elixir language and its library provides.
+
+Currently Besh supports the following concepts:
+
+* **string variable assignment** => `s = "Hi, my name is Paul"`
+* **integer variable assignment** => `i = 1982`
+* **float variable assignment** => `f = 1.8`
+* **array variable assignment** => `a = [1, 2, 3, 4]`
+* **string concatenation** => `s = "hello " <> "world"` or `s = a <> ":" <> b`
+* **string interpolation** => `s = "#{f} #{i}"`
+* **value inspection** => `inspect(a)`
+* **printing strings** => `IO.puts(s)` or `IO.write("hello")`
+* **printing inspected variables** => `IO.inspect(s, label: "string")`
+* **printing arrays** => `IO.inspect(a, array: true)`
+
 ## Usage
 
 Use the `besh` executable:
 
-```
+```shell
 $ bin/besh -h
 Usage: besh [options] FILE
     -d, --debug                 Print mismatched Elixir AST
     -e, --execute               Execute generate script
     -h, --help                  Show this help message
     -o, --output                Write the script to this file
+```
+
+### Examples
+
+If you do not provide the `-e` or `-o` flag then the resulting script will be printed:
+
+```shell
+$ bin/besh examples/hello_world.ex
+#!/bin/bash
+
+name="Hello world"
+echo $name
+```
+
+The `-e` flag immediately executes the script:
+
+```shell
+$ bin/besh -e examples/variables.ex
+'1'
+'string'
+'Concat'
+A: '3'
+B: '21'
+C: 1 2 str true false
+'3:21'
+'31 2 str true false'
+'1.1'
+```
+
+The `-o` flag writes the script to the specified location:
+
+```shell
+$ bin/besh -o write.sh examples/write.ex; cat write.sh
+#!/bin/bash
+
+echo -n "Hello world"
+```
+
+The `-d` flag prints the Elixir AST which get prewalked during the process:
+
+```shell
+$ bin/besh -d examples/hello_world.ex
+Line 144: {:__block__, [],
+ [
+   {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]},
+   {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],
+    [{:name, [line: 2], nil}]}
+ ]}
+Line 62: {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]}
+Line 139: "Hello world"
+Line 46: {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],
+ [{:name, [line: 2], nil}]}
+Line 122: {:name, [line: 2], nil}
+#!/bin/bash
+
+name="Hello world"
+echo $name
 ```
 
 ## Contact me
