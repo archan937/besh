@@ -4,7 +4,7 @@ Transpile Elixir scripts to Bash scripts
 
 ## Features
 
-As you might have guessed Besh only transpiles a small fraction of what the beautiful Elixir language and its library provides.
+As you might have guessed Besh only transpiles a small fraction of what the beautiful Elixir language and its standard library provides.
 
 Currently Besh supports the following concepts:
 
@@ -75,7 +75,7 @@ $ bin/besh -o write.sh examples/write.ex; cat write.sh
 echo -n "Hello world"
 ```
 
-The `-d` flag prints the Elixir AST which get prewalked during the process:
+The `-d` flag prints the Elixir AST which gets prewalked during the transpilation process:
 
 ```shell
 $ bin/besh -d examples/hello_world.ex
