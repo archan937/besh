@@ -14,10 +14,17 @@ Currently Besh supports the following concepts:
 * **array variable assignment** => `a = [1, 2, 3, 4]`
 * **string concatenation** => `s = "hello " <> "world"` or `s = a <> ":" <> b`
 * **string interpolation** => `s = "#{f} #{i}"`
+* **string comparisons** => `"a" .!= "b"`
+* **integer comparisons** => `1 > 0`
+* **compound operators** => `("a" .> "c") or (1 < 3)`
+* **if statements** => `if 1 <= 1 do`
+* **while statements** => `while bool do`
 * **value inspection** => `inspect(a)`
 * **printing strings** => `IO.puts(s)` or `IO.write("hello")`
 * **printing inspected variables** => `IO.inspect(s, label: "string")`
 * **printing arrays** => `IO.inspect(a, array: true)`
+
+See [the examples](https://github.com/archan937/besh/tree/master/examples) for all what you can write and their corresponding [expected scripts](https://github.com/archan937/besh/tree/master/test/expected).
 
 ## Usage
 
@@ -72,17 +79,17 @@ The `-d` flag prints the Elixir AST which get prewalked during the process:
 
 ```shell
 $ bin/besh -d examples/hello_world.ex
-Line 144: {:__block__, [],
+Line 142: {:__block__, [],
  [
    {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]},
    {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],
     [{:name, [line: 2], nil}]}
  ]}
-Line 62: {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]}
-Line 139: "Hello world"
-Line 46: {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],
+Line 75: {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]}
+Line 241: "Hello world"
+Line 61: {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],
  [{:name, [line: 2], nil}]}
-Line 122: {:name, [line: 2], nil}
+Line 236: {:name, [line: 2], nil}
 #!/bin/bash
 
 name="Hello world"
