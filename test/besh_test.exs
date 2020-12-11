@@ -25,6 +25,27 @@ defmodule BeshTest do
     """)
   end
 
+  test "transpiles if.ex" do
+    assert_transpiles("if", """
+    Equal (strings)
+    Not equal (strings)
+    Greater than (strings)
+    Less than (strings)
+    Equal
+    Not equal
+    Greater than
+    Greater or equal (greater)
+    Greater or equal (equal)
+    Less than
+    Less or equal (less)
+    Less or equal (equal)
+    Zero-length
+    Not zero-length
+    And
+    Or
+    """)
+  end
+
   defp assert_transpiles(name, output) do
     expected = "#!/bin/bash\n\n#{Besh.transpile("examples/#{name}.ex")}\n"
     actual = File.read!("test/expected/#{name}.sh")

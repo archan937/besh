@@ -3,7 +3,26 @@ defmodule Besh do
   Transpiles Elixir files to Bash.
   """
 
-  @operators [:+, :-, :*, :/]
+  @arithmetic_operators [:+, :-, :*, :/]
+  @string_comparison_operators [:==, :!=, :>, :<]
+
+  @integer_comparisons [
+    ==: "-eq",
+    !=: "-ne",
+    >: "-gt",
+    >=: "-ge",
+    <: "-lt",
+    <=: "-le"
+  ]
+
+  @compounds [
+    and: "&&",
+    or: "||"
+  ]
+
+  @integer_comparison_operators Keyword.keys(@integer_comparisons)
+  @compound_operators Keyword.keys(@compounds)
+  @tab_size 2
 
   @spec transpile(binary, boolean) :: binary
   def transpile(input, debug \\ false) do
@@ -17,16 +36,12 @@ defmodule Besh do
     |> Macro.prewalk(fn ast ->
       t(ast, debug)
     end)
-    |> case do
-      {:__block__, [], block} ->
-        Enum.join(block, "\n")
-
-      ast ->
-        ast
-    end
+    |> String.trim()
   end
 
-  defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :inspect]}, _, args}, debug) do
+  defp t(_ast, _debug, tab \\ 0)
+
+  defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :inspect]}, _, args}, debug, tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     [value | options] = args
@@ -39,43 +54,69 @@ defmodule Besh do
     prefix = if label, do: "\"#{label}: \"", else: ""
     postfix = if array, do: "[@]", else: "@Q"
 
-    "echo #{prefix}" <> String.replace("${#{value}#{postfix}}", "${$", "${")
+    indent(tab, "echo #{prefix}" <> String.replace("${#{value}#{postfix}}", "${$", "${"))
   end
 
-  defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :puts]}, _, [string]}, debug) do
+  defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :puts]}, _, [string]}, debug, tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     string = t(string, debug)
-
-    "echo #{string}"
+    indent(tab, "echo #{string}")
   end
 
-  defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :write]}, _, [string]}, debug) do
+  defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :write]}, _, [string]}, debug, tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     string = t(string, debug)
-
-    "echo -n #{string}"
+    indent(tab, "echo -n #{string}")
   end
 
-  defp t(ast = {:=, _, [{name, _, nil}, value]}, debug) do
+  defp t(ast = {:=, _, [{name, _, nil}, value]}, debug, tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     value = t(value, debug)
-
-    "#{name}=#{value}"
+    indent(tab, "#{name}=#{value}")
   end
 
-  defp t(ast = {:<>, _, [left, right]}, debug) do
+  defp t(ast = {operator, _, [left, right]}, debug, tab)
+       when operator in @integer_comparison_operators do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     left = t(left, debug)
     right = t(right, debug)
 
-    "#{left}#{right}"
+    indent(tab, "[ #{left} #{Keyword.get(@integer_comparisons, operator)} #{right} ]")
   end
 
-  defp t(ast = {:<<>>, _, terms}, debug) do
+  defp t(ast = {{:., _, [left, operator]}, _, [right]}, debug, tab)
+       when operator in @string_comparison_operators do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+
+    left = t(left, debug)
+    right = t(right, debug)
+
+    indent(tab, "[ #{left} \\#{operator} #{right} ]")
+  end
+
+  defp t(ast = {operator, _, [left, right]}, debug, tab) when operator in @compound_operators do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+
+    left = t(left, debug)
+    right = t(right, debug)
+
+    indent(tab, "#{left} #{Keyword.get(@compounds, operator)} #{right}")
+  end
+
+  defp t(ast = {:<>, _, [left, right]}, debug, tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+
+    left = t(left, debug)
+    right = t(right, debug)
+
+    indent(tab, "#{left}#{right}")
+  end
+
+  defp t(ast = {:<<>>, _, terms}, debug, _tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     terms
@@ -97,7 +138,39 @@ defmodule Besh do
     |> inspect()
   end
 
-  defp t(ast = {:inspect, _, args}, debug) do
+  defp t(ast = {:__block__, _, block}, debug, tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+
+    block
+    |> Enum.map(fn ast -> t(ast, debug, tab) end)
+    |> Enum.join("\n")
+  end
+
+  defp t(ast = {:break, _, nil}, debug, tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    indent(tab, "break")
+  end
+
+  defp t(ast = {:if, _, [expression, [do: block]]}, debug, tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+
+    expression =
+      expression
+      |> t(debug)
+      |> String.replace(~r/(^\[ | \]$)/, "")
+
+    Enum.join(
+      [
+        "",
+        indent(tab, "if [ #{expression} ]; then"),
+        t(block, debug, tab + @tab_size),
+        indent(tab, "fi")
+      ],
+      "\n"
+    )
+  end
+
+  defp t(ast = {:inspect, _, args}, debug, tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     [value | options] = args
@@ -107,25 +180,29 @@ defmodule Besh do
     array = Keyword.get(options, :array)
     postfix = if array, do: "[@]", else: "@Q"
 
-    String.replace("${#{value}#{postfix}}", "${$", "${")
+    indent(tab, String.replace("${#{value}#{postfix}}", "${$", "${"))
   end
 
-  defp t(ast = {operator, _, [left, right]}, debug) when operator in @operators do
+  defp t(ast = {:is_empty, _, [expression]}, debug, _tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    "-z #{t(expression, debug)}"
+  end
+
+  defp t(ast = {:is_present, _, [expression]}, debug, _tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    "-n #{t(expression, debug)}"
+  end
+
+  defp t(ast = {operator, _, [left, right]}, debug, tab) when operator in @arithmetic_operators do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     left = t(left, debug)
     right = t(right, debug)
 
-    "$((#{left}#{operator}#{right}))"
+    indent(tab, "$((#{left}#{operator}#{right}))")
   end
 
-  defp t(ast = {name, _, nil}, debug) when is_atom(name) do
-    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
-
-    "$#{name}"
-  end
-
-  defp t(ast, debug) when is_list(ast) do
+  defp t(ast, debug, tab) when is_list(ast) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     items =
@@ -133,16 +210,25 @@ defmodule Besh do
       |> Enum.map(fn ast -> t(ast, debug) end)
       |> Enum.join(" ")
 
-    "(" <> items <> ")"
+    indent(tab, "(" <> items <> ")")
   end
 
-  defp t(ast, debug) when is_binary(ast) do
+  defp t(ast = {name, _, nil}, debug, tab) when is_atom(name) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
-    inspect(ast)
+    indent(tab, "$#{name}")
   end
 
-  defp t(ast, debug) do
+  defp t(ast, debug, tab) when is_binary(ast) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
-    ast
+    indent(tab, inspect(ast))
+  end
+
+  defp t(ast, debug, tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    indent(tab, "#{ast}")
+  end
+
+  defp indent(tab, string) do
+    String.duplicate(" ", Enum.max([0, tab])) <> string
   end
 end
