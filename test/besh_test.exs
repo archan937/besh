@@ -46,6 +46,16 @@ defmodule BeshTest do
     """)
   end
 
+  test "transpiles while.ex" do
+    assert_transpiles("while", """
+    0
+    1
+    2
+    3
+    4
+    """)
+  end
+
   defp assert_transpiles(name, output) do
     expected = "#!/bin/bash\n\n#{Besh.transpile("examples/#{name}.ex")}\n"
     actual = File.read!("test/expected/#{name}.sh")

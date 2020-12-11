@@ -170,6 +170,25 @@ defmodule Besh do
     )
   end
 
+  defp t(ast = {:while, _, [expression, [do: block]]}, debug, tab) do
+    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+
+    expression =
+      expression
+      |> t(debug)
+      |> String.replace(~r/(^\[ | \]$)/, "")
+
+    Enum.join(
+      [
+        "",
+        indent(tab, "while [ #{expression} ]; do"),
+        t(block, debug, tab + @tab_size),
+        indent(tab, "done")
+      ],
+      "\n"
+    )
+  end
+
   defp t(ast = {:inspect, _, args}, debug, tab) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
