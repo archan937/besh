@@ -50,7 +50,7 @@ if is_empty("") do
   IO.puts("Zero-length")
 end
 
-if is_present("abc") do
+if is_not_empty("abc") do
   IO.puts("Not zero-length")
 end
 
