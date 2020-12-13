@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Arithmetics do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       @arithmetic_operators [:+, :-, :*, :/]
 
       defp t(
@@ -10,7 +10,7 @@ defmodule Besh.Transpiler.Arithmetics do
              %{debug: debug, tab: tab, context: context} = opts
            )
            when operator in @arithmetic_operators do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         left = nt(left, opts)
         right = nt(right, opts)

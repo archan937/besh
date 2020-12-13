@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Comparisons do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       @comparison_operators [
         :==,
         :!=,
@@ -24,7 +24,7 @@ defmodule Besh.Transpiler.Comparisons do
              %{debug: debug, tab: tab, context: context} = opts
            )
            when operator in @comparison_operators do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         left = nt(left, opts)
         right = nt(right, opts)
@@ -44,7 +44,7 @@ defmodule Besh.Transpiler.Comparisons do
 
       defp t(ast = {operator, _, [left, right]}, %{debug: debug, tab: tab} = opts)
            when operator in @compound_operators do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         left = nt(left, opts)
         right = nt(right, opts)
@@ -53,7 +53,7 @@ defmodule Besh.Transpiler.Comparisons do
       end
 
       defp t(ast = {:is_empty, _, [expression]}, %{debug: debug, context: context} = opts) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         {open, close} =
           case context do
@@ -68,7 +68,7 @@ defmodule Besh.Transpiler.Comparisons do
       end
 
       defp t(ast = {:is_not_empty, _, [expression]}, %{debug: debug, context: context} = opts) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         {open, close} =
           case context do

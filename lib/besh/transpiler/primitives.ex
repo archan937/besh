@@ -2,9 +2,9 @@ defmodule Besh.Transpiler.Primitives do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       defp t(ast, %{debug: debug, tab: tab, context: context} = opts) when is_list(ast) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         items =
           ast
@@ -23,19 +23,19 @@ defmodule Besh.Transpiler.Primitives do
 
       defp t(ast = {name, _, nil}, %{debug: debug, tab: tab, context: context})
            when is_atom(name) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         prefix = if Enum.member?([:inspection, :arithmetic], context), do: "", else: "$"
         indent(tab, "#{prefix}#{name}")
       end
 
       defp t(ast, %{debug: debug, tab: tab}) when is_binary(ast) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
         indent(tab, inspect(ast))
       end
 
       defp t(ast, %{debug: debug, tab: tab}) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
         indent(tab, "#{ast}")
       end
     end

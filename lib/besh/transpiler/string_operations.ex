@@ -2,9 +2,9 @@ defmodule Besh.Transpiler.StringOperations do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       defp t(ast = {:<>, _, [left, right]}, %{debug: debug, tab: tab} = opts) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         left = nt(left, opts)
         right = nt(right, opts)
@@ -13,7 +13,7 @@ defmodule Besh.Transpiler.StringOperations do
       end
 
       defp t(ast = {:<<>>, _, terms}, %{debug: debug} = opts) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         terms
         |> Enum.map(fn

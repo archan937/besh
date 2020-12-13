@@ -2,12 +2,12 @@ defmodule Besh.Transpiler.IO do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       defp t(
              ast = {{:., _, [{:__aliases__, _, [:IO]}, :inspect]}, _, [value | options]},
              %{debug: debug, tab: tab} = opts
            ) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         label =
           case options |> List.flatten() |> Keyword.get(:label) do
@@ -27,7 +27,7 @@ defmodule Besh.Transpiler.IO do
              ast = {{:., _, [{:__aliases__, _, [:IO]}, :puts]}, _, [string]},
              %{debug: debug, tab: tab} = opts
            ) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         string = nt(string, opts)
         indent(tab, "echo #{string}")
@@ -37,7 +37,7 @@ defmodule Besh.Transpiler.IO do
              ast = {{:., _, [{:__aliases__, _, [:IO]}, :write]}, _, [string]},
              %{debug: debug, tab: tab} = opts
            ) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         string = nt(string, opts)
         indent(tab, "echo -n #{string}")

@@ -2,9 +2,9 @@ defmodule Besh.Transpiler.Loops do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       defp t(ast = {:while, _, [expression, [do: block]]}, %{debug: debug, tab: tab} = opts) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         opts = Map.put(opts, :tab, tab + @tab_size)
         expression = nt(expression, opts)
@@ -31,7 +31,7 @@ defmodule Besh.Transpiler.Loops do
              ast = {:for, _, [initializer, condition, step, [do: block]]},
              %{debug: debug, tab: tab} = opts
            ) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         opts = Map.put(opts, :tab, tab + @tab_size)
         context = [context: :arithmetic]
@@ -55,7 +55,7 @@ defmodule Besh.Transpiler.Loops do
              ast = {:for, _, [{:<-, _, [{item, _, nil}, items]}, [do: block]]},
              %{debug: debug, tab: tab} = opts
            ) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         opts = Map.put(opts, :tab, tab + @tab_size)
 

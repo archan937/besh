@@ -2,9 +2,9 @@ defmodule Besh.Transpiler.Conditionals do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote location: :keep do
+    quote do
       defp t(ast = {:{}, _, [{:{}, _, [expression]}]}, %{debug: debug, context: context} = opts) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         {open, close} =
           if context == :arithmetic do
@@ -20,7 +20,7 @@ defmodule Besh.Transpiler.Conditionals do
              ast = {:if, _, [expression, [do: block]]},
              %{debug: debug, tab: tab, context: context} = opts
            ) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+        log(ast, debug, __ENV__)
 
         opts = Map.put(opts, :tab, tab + @tab_size)
         expression = nt(expression, opts)

@@ -28,7 +28,7 @@ defmodule Besh.Transpiler do
   end
 
   defp t(ast = {:__block__, _, block}, %{debug: debug} = opts) do
-    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    log(ast, debug, __ENV__)
 
     block
     |> Enum.map(fn ast -> t(ast, opts) end)
@@ -36,12 +36,12 @@ defmodule Besh.Transpiler do
   end
 
   defp t(ast = {:break, _, nil}, %{debug: debug, tab: tab}) do
-    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    log(ast, debug, __ENV__)
     indent(tab, "break")
   end
 
   defp t(ast = {:inspect, _, [value]}, %{debug: debug, tab: tab} = opts) do
-    if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
+    log(ast, debug, __ENV__)
 
     {ast, postfix} =
       case value do
@@ -70,6 +70,20 @@ defmodule Besh.Transpiler do
   use StringOperations
   use Variables
   use Primitives
+
+  defp log(ast, debug, %{file: file, line: line}) do
+    if debug do
+      [
+        IO.ANSI.yellow(),
+        Path.basename(file, ".ex"),
+        ":#{line} ",
+        IO.ANSI.reset(),
+        inspect(ast, pretty: true)
+      ]
+      |> Enum.join("")
+      |> IO.puts()
+    end
+  end
 
   defp indent(tab, string) do
     String.duplicate(" ", tab) <> string
