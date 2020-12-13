@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.StringOperations do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       defp t(ast = {:<>, _, [left, right]}, %{debug: debug, tab: tab} = opts) do
         log(ast, debug, __ENV__)
 

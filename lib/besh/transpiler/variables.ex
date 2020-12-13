@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Variables do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       defp t(ast = {:=, _, [{name, _, nil}, value]}, %{debug: debug, tab: tab} = opts) do
         log(ast, debug, __ENV__)
 

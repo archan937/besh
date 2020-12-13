@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Conditionals do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       defp t(ast = {:{}, _, [{:{}, _, [expression]}]}, %{debug: debug, context: context} = opts) do
         log(ast, debug, __ENV__)
 
@@ -37,6 +37,31 @@ defmodule Besh.Transpiler.Conditionals do
           end)
 
         to_if_statement(cases, opts)
+      end
+
+      defp t(ast = {:case, _, [expression, [do: cases]]}, %{debug: debug, tab: tab} = opts) do
+        log(ast, debug, __ENV__)
+
+        cases =
+          cases
+          |> Enum.flat_map(fn {:->, _, [[match], block]} ->
+            [
+              t(match, opts) <> ")",
+              t(block, Map.put(opts, :tab, tab + @tab_size)),
+              indent(tab + @tab_size, ";;")
+            ]
+          end)
+          |> Enum.join("\n")
+
+        Enum.join(
+          [
+            "",
+            indent(tab, "case #{nt(expression, opts)} in"),
+            cases,
+            indent(tab, "esac")
+          ],
+          "\n"
+        )
       end
 
       defp to_if_statement(cases, %{tab: tab, context: context} = opts) do

@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Loops do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       defp t(ast = {:while, _, [expression, [do: block]]}, %{debug: debug, tab: tab} = opts) do
         log(ast, debug, __ENV__)
 

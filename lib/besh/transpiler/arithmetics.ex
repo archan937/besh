@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Arithmetics do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       @arithmetic_operators [:+, :-, :*, :/]
 
       defp t(

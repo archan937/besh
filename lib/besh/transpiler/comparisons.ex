@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Comparisons do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       @comparison_operators [
         :==,
         :!=,

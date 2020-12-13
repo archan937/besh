@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.IO do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       defp t(
              ast = {{:., _, [{:__aliases__, _, [:IO]}, :inspect]}, _, [value | options]},
              %{debug: debug, tab: tab} = opts

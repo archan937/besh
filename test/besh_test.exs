@@ -67,6 +67,16 @@ defmodule BeshTest do
     """)
   end
 
+  test "transpiles case.ex" do
+    assert_transpiles("case", """
+    Success
+    No content
+    Unauthorized
+    Internal error
+    Unknown
+    """)
+  end
+
   test "transpiles for.ex" do
     assert_transpiles("for", """
     10 9 8 7 6 5 4 3 2 1 Color = Blue

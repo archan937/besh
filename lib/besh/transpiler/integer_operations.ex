@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.IntegerOperations do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       @increment_operators [:+, :-]
 
       defp t(ast = {{:., _, [{name, _, nil}, operator]}, _, []}, %{

@@ -2,7 +2,7 @@ defmodule Besh.Transpiler.Primitives do
   @moduledoc false
 
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       defp t(ast, %{debug: debug, tab: tab, context: context} = opts) when is_list(ast) do
         log(ast, debug, __ENV__)
 
