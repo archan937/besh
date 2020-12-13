@@ -3,33 +3,38 @@ defmodule Besh.Transpiler.Primitives do
 
   defmacro __using__(_) do
     quote location: :keep do
-      defp t(ast, debug, tab) when is_list(ast) do
+      defp t(ast, %{debug: debug, tab: tab, context: context} = opts) when is_list(ast) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
         items =
           ast
-          |> Enum.map(fn ast -> t(ast, debug) end)
+          |> Enum.map(fn ast -> nt(ast, opts) end)
           |> Enum.join(" ")
 
-        indent(tab, "(" <> items <> ")")
+        {open, close} =
+          if context == :forloop do
+            {"", ""}
+          else
+            {"(", ")"}
+          end
+
+        indent(tab, "#{open}#{items}#{close}")
       end
 
-      defp t(ast = {:break, _, nil}, debug, tab) do
+      defp t(ast = {name, _, nil}, %{debug: debug, tab: tab, context: context})
+           when is_atom(name) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
-        indent(tab, "break")
+
+        prefix = if Enum.member?([:inspection, :arithmetic], context), do: "", else: "$"
+        indent(tab, "#{prefix}#{name}")
       end
 
-      defp t(ast = {name, _, nil}, debug, tab) when is_atom(name) do
-        if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
-        indent(tab, "$#{name}")
-      end
-
-      defp t(ast, debug, tab) when is_binary(ast) do
+      defp t(ast, %{debug: debug, tab: tab}) when is_binary(ast) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
         indent(tab, inspect(ast))
       end
 
-      defp t(ast, debug, tab) do
+      defp t(ast, %{debug: debug, tab: tab}) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
         indent(tab, "#{ast}")
       end

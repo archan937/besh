@@ -14,15 +14,16 @@ Currently Besh supports the following concepts:
 * **array variable assignment** => `a = [1, 2, 3, 4]`
 * **string concatenation** => `s = "hello " <> "world"` or `s = a <> ":" <> b`
 * **string interpolation** => `s = "#{f} #{i}"`
-* **string comparisons** => `"a" .!= "b"`
+* **string comparisons** => `"a" != "b"`
 * **integer comparisons** => `1 > 0`
-* **compound operators** => `("a" .> "c") or (1 < 3)`
-* **if statements** => `if 1 <= 1 do`
+* **compound operators** => `("a" == "b") or {{ 1 < 2 }}`
+* **if statements** => `if "b" > "a" do`
 * **while statements** => `while bool do`
-* **value inspection** => `inspect(a)`
+* **for loops** => `for i = 10, i > 0, i.- do` or `for color <- colors do`
+* **value inspection** => `inspect(i)`
 * **printing strings** => `IO.puts(s)` or `IO.write("hello")`
 * **printing inspected variables** => `IO.inspect(s, label: "string")`
-* **printing arrays** => `IO.inspect(a, array: true)`
+* **printing arrays** => `IO.inspect(@(a))`
 
 See [the examples](https://github.com/archan937/besh/tree/master/examples) for all what you can write and their corresponding [expected scripts](https://github.com/archan937/besh/tree/master/test/expected).
 

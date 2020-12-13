@@ -7,9 +7,11 @@ defmodule Besh.Transpiler do
     Arithmetics,
     Comparisons,
     Conditionals,
+    IntegerOperations,
     Loops,
     Primitives,
-    StringOperations
+    StringOperations,
+    Variables
   }
 
   alias Besh.Transpiler.IO, as: TranspilerIO
@@ -20,39 +22,43 @@ defmodule Besh.Transpiler do
     elixir
     |> Code.string_to_quoted!()
     |> Macro.prewalk(fn ast ->
-      t(ast, debug)
+      t(ast, %{debug: debug, tab: 0, context: :script})
     end)
     |> String.trim()
   end
 
-  defp t(_ast, _debug, tab \\ 0)
-
-  defp t(ast = {:__block__, _, block}, debug, tab) do
+  defp t(ast = {:__block__, _, block}, %{debug: debug} = opts) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
     block
-    |> Enum.map(fn ast -> t(ast, debug, tab) end)
+    |> Enum.map(fn ast -> t(ast, opts) end)
     |> Enum.join("\n")
   end
 
-  defp t(ast = {:=, _, [{name, _, nil}, value]}, debug, tab) do
+  defp t(ast = {:break, _, nil}, %{debug: debug, tab: tab}) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
-
-    value = t(value, debug)
-    indent(tab, "#{name}=#{value}")
+    indent(tab, "break")
   end
 
-  defp t(ast = {:inspect, _, args}, debug, tab) do
+  defp t(ast = {:inspect, _, [value]}, %{debug: debug, tab: tab} = opts) do
     if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
-    [value | options] = args
-    options = List.flatten(options)
-    value = t(value, debug)
+    {ast, postfix} =
+      case value do
+        {:@, _, [value]} -> {value, "[@]"}
+        _ -> {value, "@Q"}
+      end
 
-    array = Keyword.get(options, :array)
-    postfix = if array, do: "[@]", else: "@Q"
+    indent(tab, "${#{nt(ast, opts, context: :inspection)}#{postfix}}")
+  end
 
-    indent(tab, String.replace("${#{value}#{postfix}}", "${$", "${"))
+  defp nt(ast, opts, overrides \\ []) do
+    opts =
+      opts
+      |> Map.put(:tab, 0)
+      |> Map.merge(Enum.into(overrides, %{}))
+
+    t(ast, opts)
   end
 
   use TranspilerIO
@@ -60,10 +66,12 @@ defmodule Besh.Transpiler do
   use Loops
   use Comparisons
   use Arithmetics
+  use IntegerOperations
   use StringOperations
+  use Variables
   use Primitives
 
   defp indent(tab, string) do
-    String.duplicate(" ", Enum.max([0, tab])) <> string
+    String.duplicate(" ", tab) <> string
   end
 end

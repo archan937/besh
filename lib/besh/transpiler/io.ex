@@ -3,33 +3,43 @@ defmodule Besh.Transpiler.IO do
 
   defmacro __using__(_) do
     quote location: :keep do
-      defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :inspect]}, _, args}, debug, tab) do
+      defp t(
+             ast = {{:., _, [{:__aliases__, _, [:IO]}, :inspect]}, _, [value | options]},
+             %{debug: debug, tab: tab} = opts
+           ) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
-        [value | options] = args
-        options = List.flatten(options)
-        value = t(value, debug)
+        label =
+          case options |> List.flatten() |> Keyword.get(:label) do
+            label when is_binary(label) -> "\"#{label}: \""
+            _ -> ""
+          end
 
-        label = Keyword.get(options, :label)
-        array = Keyword.get(options, :array)
+        inspected =
+          {:inspect, [], [value]}
+          |> nt(opts)
+          |> String.trim()
 
-        prefix = if label, do: "\"#{label}: \"", else: ""
-        postfix = if array, do: "[@]", else: "@Q"
-
-        indent(tab, "echo #{prefix}" <> String.replace("${#{value}#{postfix}}", "${$", "${"))
+        indent(tab, "echo #{label}" <> inspected)
       end
 
-      defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :puts]}, _, [string]}, debug, tab) do
+      defp t(
+             ast = {{:., _, [{:__aliases__, _, [:IO]}, :puts]}, _, [string]},
+             %{debug: debug, tab: tab} = opts
+           ) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
-        string = t(string, debug)
+        string = nt(string, opts)
         indent(tab, "echo #{string}")
       end
 
-      defp t(ast = {{:., _, [{:__aliases__, _, [:IO]}, :write]}, _, [string]}, debug, tab) do
+      defp t(
+             ast = {{:., _, [{:__aliases__, _, [:IO]}, :write]}, _, [string]},
+             %{debug: debug, tab: tab} = opts
+           ) do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
-        string = t(string, debug)
+        string = nt(string, opts)
         indent(tab, "echo -n #{string}")
       end
     end

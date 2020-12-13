@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ "a" \== "a" ]; then
+if [ "a" == "a" ]; then
   echo "Equal (strings)"
 fi
 
-if [ "a" \!= "b" ]; then
+if [ "a" != "b" ]; then
   echo "Not equal (strings)"
 fi
 
@@ -16,35 +16,35 @@ if [ "a" \< "b" ]; then
   echo "Less than (strings)"
 fi
 
-if [ 1 -eq 1 ]; then
+if (( 1 == 1 )); then
   echo "Equal"
 fi
 
-if [ 0 -ne 1 ]; then
+if (( 0 != 1 )); then
   echo "Not equal"
 fi
 
-if [ 1 -gt 0 ]; then
+if (( 1 > 0 )); then
   echo "Greater than"
 fi
 
-if [ 1 -ge 0 ]; then
+if (( 1 >= 0 )); then
   echo "Greater or equal (greater)"
 fi
 
-if [ 0 -ge 0 ]; then
+if (( 0 >= 0 )); then
   echo "Greater or equal (equal)"
 fi
 
-if [ 0 -lt 1 ]; then
+if (( 0 < 1 )); then
   echo "Less than"
 fi
 
-if [ 0 -le 1 ]; then
+if (( 0 <= 1 )); then
   echo "Less or equal (less)"
 fi
 
-if [ 1 -le 1 ]; then
+if (( 1 <= 1 )); then
   echo "Less or equal (equal)"
 fi
 
@@ -56,10 +56,10 @@ if [ -n "abc" ]; then
   echo "Not zero-length"
 fi
 
-if [ "a" \== "a" ] && [ "b" \== "b" ]; then
+if [ "a" == "a" ] && [ "b" == "b" ]; then
   echo "And"
 fi
 
-if [ "a" \== "b" ] || [ "c" \== "c" ]; then
+if [ "a" == "b" ] || (( 1 < 2 )); then
   echo "Or"
 fi

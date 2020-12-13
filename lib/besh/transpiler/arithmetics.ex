@@ -5,14 +5,24 @@ defmodule Besh.Transpiler.Arithmetics do
     quote location: :keep do
       @arithmetic_operators [:+, :-, :*, :/]
 
-      defp t(ast = {operator, _, [left, right]}, debug, tab)
+      defp t(
+             ast = {operator, _, [left, right]},
+             %{debug: debug, tab: tab, context: context} = opts
+           )
            when operator in @arithmetic_operators do
         if debug, do: IO.inspect(ast, label: "Line #{__ENV__.line}")
 
-        left = t(left, debug)
-        right = t(right, debug)
+        left = nt(left, opts)
+        right = nt(right, opts)
 
-        indent(tab, "$((#{left}#{operator}#{right}))")
+        {open, close} =
+          if context == :arithmetic do
+            {"", ""}
+          else
+            {"$((", "))"}
+          end
+
+        indent(tab, "#{open}#{left}#{operator}#{right}#{close}")
       end
     end
   end

@@ -56,9 +56,20 @@ defmodule BeshTest do
     """)
   end
 
+  test "transpiles for.ex" do
+    assert_transpiles("for", """
+    10 9 8 7 6 5 4 3 2 1 Color = Blue
+    Color = Green
+    Color = Pink
+    Color = White
+    Color = Red
+    My favorite color is Blue
+    """)
+  end
+
   defp assert_transpiles(name, output) do
-    expected = "#!/bin/bash\n\n#{Besh.transpile("examples/#{name}.ex")}\n"
-    actual = File.read!("test/expected/#{name}.sh")
+    expected = File.read!("test/expected/#{name}.sh")
+    actual = "#!/bin/bash\n\n#{Besh.transpile("examples/#{name}.ex")}\n"
     assert expected == actual
     assert String.to_charlist(output) == :os.cmd('bin/besh -e examples/#{name}.ex')
   end

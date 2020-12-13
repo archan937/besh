@@ -5,9 +5,9 @@ i=0
 
 while [ $bool ]; do
   echo $i
-  i=$(($i+1))
+  ((i++))
 
-  if [ $i -eq 5 ]; then
+  if [ $i == 5 ]; then
     break
   fi
 done
