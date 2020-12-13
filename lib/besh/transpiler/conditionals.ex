@@ -28,6 +28,17 @@ defmodule Besh.Transpiler.Conditionals do
         to_if_statement(cases, opts)
       end
 
+      defp t(ast = {:cond, _, [[do: cases]]}, %{debug: debug} = opts) do
+        log(ast, debug, __ENV__)
+
+        cases =
+          Enum.map(cases, fn {:->, _, [[expression], block]} ->
+            %{expression: expression, block: block}
+          end)
+
+        to_if_statement(cases, opts)
+      end
+
       defp to_if_statement(cases, %{tab: tab, context: context} = opts) do
         {open, close} =
           if context == :arithmetic do

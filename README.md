@@ -18,6 +18,7 @@ Currently Besh supports the following concepts:
 * **integer comparisons** => `1 > 0`
 * **compound operators** => `("a" == "b") or {{ 1 < 2 }}`
 * **if / if else statements** => `if "b" > "a" do` or `if false, do: 1, else: 2`
+* **cond statements** => `cond do; false -> "a"; 1 == 2 -> "b"; true -> "c"; end`
 * **while statements** => `while bool do`
 * **for loops** => `for i = 10, i > 0, i.- do` or `for color <- colors do`
 * **value inspection** => `inspect(i)`

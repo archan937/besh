@@ -48,6 +48,15 @@ defmodule BeshTest do
     """)
   end
 
+  test "transpiles cond.ex" do
+    assert_transpiles("cond", """
+    a
+    b
+    b
+    c
+    """)
+  end
+
   test "transpiles while.ex" do
     assert_transpiles("while", """
     0
