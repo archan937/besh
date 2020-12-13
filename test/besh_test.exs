@@ -43,6 +43,8 @@ defmodule BeshTest do
     Not zero-length
     And
     Or
+    true
+    true
     """)
   end
 

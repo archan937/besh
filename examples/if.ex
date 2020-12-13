@@ -61,3 +61,11 @@ end
 if ("a" == "b") or {{ 1 < 2 }} do
   IO.puts("Or")
 end
+
+if "c" == "c" do
+  IO.puts("true")
+else
+  IO.puts("false")
+end
+
+if "a" == "c", do: IO.puts("false"), else: IO.puts("true")

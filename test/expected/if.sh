@@ -63,3 +63,15 @@ fi
 if [ "a" == "b" ] || (( 1 < 2 )); then
   echo "Or"
 fi
+
+if [ "c" == "c" ]; then
+  echo "true"
+else
+  echo "false"
+fi
+
+if [ "a" == "c" ]; then
+  echo "false"
+else
+  echo "true"
+fi
