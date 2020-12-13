@@ -8,6 +8,7 @@ As you might have guessed Besh only transpiles a small fraction of what the beau
 
 Currently Besh supports the following concepts:
 
+* **raw bash shell** => `ls | grep READ` or `~b/[7-8]*/`
 * **string variable assignment** => `s = "Hi, my name is Paul"`
 * **integer variable assignment** => `i = 1982`
 * **float variable assignment** => `f = 1.8`

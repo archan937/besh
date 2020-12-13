@@ -10,6 +10,7 @@ defmodule Besh.Transpiler do
     IntegerOperations,
     Loops,
     Primitives,
+    Sigils,
     StringOperations,
     Variables
   }
@@ -69,6 +70,7 @@ defmodule Besh.Transpiler do
   use IntegerOperations
   use StringOperations
   use Variables
+  use Sigils
   use Primitives
 
   defp log(ast, debug, %{file: file, line: line}) do
