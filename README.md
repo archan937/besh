@@ -18,13 +18,14 @@ Currently Besh supports the following concepts:
 * **string comparisons** => `"a" != "b"`
 * **integer comparisons** => `1 > 0`
 * **compound operators** => `("a" == "b") or {{ 1 < 2 }}`
-* **negations** => `if !{{ 2 <= 1 }} do` or `if !("a" < "b" and "a" != "a") do`
 * **if / if else statements** => `if "b" > "a" do` or `if false, do: 1, else: 2`
+* **negations** => `if !{{ 2 <= 1 }} do` or `if !("a" < "b" and "a" != "a") do`
 * **cond statements** => `cond do; false -> "a"; 1 == 2 -> "b"; true -> "c"; end`
 * **case statements** => `case status do`
 * **while statements** => `while bool do`
 * **for loops** => `for i = 10, i > 0, i.- do` or `for color <- colors do`
 * **value inspection** => `inspect(i)`
+* **functions** => `def say_hello(name) do`
 * **printing strings** => `IO.puts(s)` or `IO.write("hello")`
 * **printing inspected variables** => `IO.inspect(s, label: "string")`
 * **printing arrays** => `IO.inspect(@(a))`
@@ -84,7 +85,7 @@ The `-d` flag prints the Elixir AST which gets prewalked during the transpilatio
 
 ```shell
 $ bin/besh -d examples/hello_world.ex
-transpiler:32 {:__block__, [],
+transpiler:33 {:__block__, [],
  [
    {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]},
    {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],

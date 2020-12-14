@@ -12,7 +12,7 @@ defmodule Besh.Transpiler.Primitives do
           |> Enum.join(" ")
 
         {open, close} =
-          if context == :forloop do
+          if Enum.member?([:forloop, :return], context) do
             {"", ""}
           else
             {"(", ")"}

@@ -12,26 +12,29 @@ defmodule Besh.Transpiler.StringOperations do
         indent(tab, "#{left}#{right}")
       end
 
-      defp t(ast = {:<<>>, _, terms}, %{debug: debug} = opts) do
+      defp t(ast = {:<<>>, _, terms}, %{debug: debug, tab: tab} = opts) do
         log(ast, debug, __ENV__)
 
-        terms
-        |> Enum.map(fn
-          {:"::", _, [{_, _, [ast]}, _]} ->
-            nt(ast, opts)
+        string =
+          terms
+          |> Enum.map(fn
+            {:"::", _, [{_, _, [ast]}, _]} ->
+              nt(ast, opts)
 
-          ast ->
-            ast
-        end)
-        |> Enum.map(fn value ->
-          if String.match?(value, ~r/^\$\w+$/) do
-            String.replace(value, "$", "${") <> "}"
-          else
-            value
-          end
-        end)
-        |> Enum.join("")
-        |> inspect()
+            ast ->
+              ast
+          end)
+          |> Enum.map(fn value ->
+            if String.match?(value, ~r/^\$\w+$/) do
+              String.replace(value, "$", "${") <> "}"
+            else
+              value
+            end
+          end)
+          |> Enum.join("")
+          |> inspect()
+
+        indent(tab, string)
       end
     end
   end
