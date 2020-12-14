@@ -81,8 +81,9 @@ defmodule Besh.Transpiler do
         IO.ANSI.yellow(),
         Path.basename(file, ".ex"),
         ":#{line} ",
-        IO.ANSI.reset(),
-        inspect(ast, pretty: true)
+        IO.ANSI.light_black(),
+        inspect(ast, pretty: true),
+        IO.ANSI.reset()
       ]
       |> Enum.join("")
       |> IO.puts()
