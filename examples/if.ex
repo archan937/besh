@@ -69,3 +69,11 @@ else
 end
 
 if "a" == "c", do: IO.puts("false"), else: IO.puts("true")
+
+if !("a" < "b" and "a" != "a") do
+  IO.puts("Yes")
+end
+
+if !{{ 2 <= 1 }} and ("a" == "a") do
+  IO.puts("Yes")
+end

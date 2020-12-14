@@ -45,6 +45,8 @@ defmodule BeshTest do
     Or
     true
     true
+    Yes
+    Yes
     """)
   end
 

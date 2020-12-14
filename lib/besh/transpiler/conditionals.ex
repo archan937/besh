@@ -3,6 +3,21 @@ defmodule Besh.Transpiler.Conditionals do
 
   defmacro __using__(_) do
     quote location: :keep do
+      defp t(ast = {:!, _, [expression]}, %{debug: debug, tab: tab} = opts) do
+        log(ast, debug, __ENV__)
+
+        {open, close} =
+          case expression do
+            {atom, _, _} when atom in [:and, :or] ->
+              {"{ ", "; }"}
+
+            _ ->
+              {"", ""}
+          end
+
+        indent(tab, "! #{open}#{nt(expression, opts)}#{close}")
+      end
+
       defp t(ast = {:{}, _, [{:{}, _, [expression]}]}, %{debug: debug, context: context} = opts) do
         log(ast, debug, __ENV__)
 

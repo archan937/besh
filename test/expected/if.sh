@@ -75,3 +75,11 @@ if [ "a" == "c" ]; then
 else
   echo "true"
 fi
+
+if ! { [ "a" \< "b" ] && [ "a" != "a" ]; }; then
+  echo "Yes"
+fi
+
+if ! (( 2 <= 1 )) && [ "a" == "a" ]; then
+  echo "Yes"
+fi

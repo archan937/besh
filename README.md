@@ -8,7 +8,7 @@ As you might have guessed Besh only transpiles a small fraction of what the beau
 
 Currently Besh supports the following concepts:
 
-* **raw bash shell** => `~b{ls | grep READ}` or `~b/[7-8]*/`
+* **raw bash** => `~b{ls | grep READ}` or `~b/[7-8]*/`
 * **string variable assignment** => `s = "Hi, my name is Paul"`
 * **integer variable assignment** => `i = 1982`
 * **float variable assignment** => `f = 1.8`
@@ -18,6 +18,7 @@ Currently Besh supports the following concepts:
 * **string comparisons** => `"a" != "b"`
 * **integer comparisons** => `1 > 0`
 * **compound operators** => `("a" == "b") or {{ 1 < 2 }}`
+* **negations** => `if !{{ 2 <= 1 }} do` or `if !("a" < "b" and "a" != "a") do`
 * **if / if else statements** => `if "b" > "a" do` or `if false, do: 1, else: 2`
 * **cond statements** => `cond do; false -> "a"; 1 == 2 -> "b"; true -> "c"; end`
 * **case statements** => `case status do`
