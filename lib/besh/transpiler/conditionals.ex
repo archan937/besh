@@ -73,7 +73,8 @@ defmodule Besh.Transpiler.Conditionals do
             "",
             indent(tab, "case #{nt(expression, opts)} in"),
             cases,
-            indent(tab, "esac")
+            indent(tab, "esac"),
+            ""
           ],
           "\n"
         )
@@ -112,7 +113,7 @@ defmodule Besh.Transpiler.Conditionals do
              ]}
         end)
         |> elem(1)
-        |> Kernel.++([indent(tab, "fi")])
+        |> Kernel.++([indent(tab, "fi"), ""])
         |> Enum.join("\n")
       end
     end

@@ -25,6 +25,7 @@ case $status in
   echo "Unknown"
   ;;
 esac
+
 status=204
 
 case $status in
@@ -50,6 +51,7 @@ case $status in
   echo "Unknown"
   ;;
 esac
+
 status=401
 
 case $status in
@@ -75,6 +77,7 @@ case $status in
   echo "Unknown"
   ;;
 esac
+
 status=500
 
 case $status in
@@ -100,6 +103,7 @@ case $status in
   echo "Unknown"
   ;;
 esac
+
 status=999
 
 case $status in

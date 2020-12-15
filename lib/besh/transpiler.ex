@@ -26,6 +26,9 @@ defmodule Besh.Transpiler do
     |> Macro.prewalk(fn ast ->
       t(ast, %{debug: debug, tab: 0, context: :script})
     end)
+    |> String.replace(~r/\n\n(done|esac|fi)/, "\n\\1")
+    |> String.replace(~r/(done|esac|fi)\n\s*\n\s*\n/, "\\1\n\n")
+    |> String.replace(~r/(; do|; then|\) \{)\n\n/, "\\1\n")
     |> String.trim()
   end
 

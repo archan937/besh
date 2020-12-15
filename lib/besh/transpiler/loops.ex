@@ -21,7 +21,8 @@ defmodule Besh.Transpiler.Loops do
             "",
             indent(tab, "while #{expression}; do"),
             t(block, opts),
-            indent(tab, "done")
+            indent(tab, "done"),
+            ""
           ],
           "\n"
         )
@@ -45,7 +46,8 @@ defmodule Besh.Transpiler.Loops do
             "",
             indent(tab, "for (( #{initializer}; #{condition}; #{step} )); do"),
             t(block, opts),
-            indent(tab, "done")
+            indent(tab, "done"),
+            ""
           ],
           "\n"
         )
@@ -64,7 +66,8 @@ defmodule Besh.Transpiler.Loops do
             "",
             indent(tab, "for #{nt(item, opts)} in #{nt(items, opts, context: :forloop)}; do"),
             t(block, opts),
-            indent(tab, "done")
+            indent(tab, "done"),
+            ""
           ],
           "\n"
         )

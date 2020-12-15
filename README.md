@@ -85,7 +85,7 @@ The `-d` flag prints the Elixir AST which gets prewalked during the transpilatio
 
 ```shell
 $ bin/besh -d examples/hello_world.ex
-transpiler:33 {:__block__, [],
+transpiler:36 {:__block__, [],
  [
    {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]},
    {{:., [line: 2], [{:__aliases__, [line: 2], [:IO]}, :puts]}, [line: 2],
