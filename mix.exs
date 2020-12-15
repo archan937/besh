@@ -12,8 +12,7 @@ defmodule Besh.MixProject do
       deps: deps(),
       package: package(),
       escript: [
-        main_module: Besh.CLI,
-        path: "bin/besh"
+        main_module: Besh.CLI
       ],
       preferred_cli_env: [
         coveralls: :test,

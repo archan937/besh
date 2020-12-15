@@ -107,6 +107,6 @@ defmodule BeshTest do
     expected = File.read!("test/expected/#{name}.sh")
     actual = "#!/bin/bash\n\n#{Besh.transpile("examples/#{name}.ex")}\n"
     assert expected == actual
-    assert String.to_charlist(output) == :os.cmd('bin/besh -e examples/#{name}.ex')
+    assert String.to_charlist(output) == :os.cmd('./besh -e examples/#{name}.ex')
   end
 end

@@ -37,7 +37,7 @@ See [the examples](https://github.com/archan937/besh/tree/master/examples) for a
 Use the `besh` executable:
 
 ```shell
-$ bin/besh -h
+$ ./besh -h
 Usage: besh [options] FILE
     -d, --debug                 Print mismatched Elixir AST
     -e, --execute               Execute generate script
@@ -50,7 +50,7 @@ Usage: besh [options] FILE
 If you do not provide the `-e` or `-o` flag then the resulting script will be printed:
 
 ```shell
-$ bin/besh examples/hello_world.ex
+$ ./besh examples/hello_world.ex
 #!/bin/bash
 
 name="Hello world"
@@ -60,7 +60,7 @@ echo $name
 The `-e` flag immediately executes the script:
 
 ```shell
-$ bin/besh -e examples/variables.ex
+$ ./besh -e examples/variables.ex
 '1'
 'string'
 'Concat'
@@ -75,7 +75,7 @@ C: 1 2 str true false
 The `-o` flag writes the script to the specified location:
 
 ```shell
-$ bin/besh -o write.sh examples/write.ex; cat write.sh
+$ ./besh -o write.sh examples/write.ex; cat write.sh
 #!/bin/bash
 
 echo -n "Hello world"
@@ -84,7 +84,7 @@ echo -n "Hello world"
 The `-d` flag prints the Elixir AST which gets prewalked during the transpilation process:
 
 ```shell
-$ bin/besh -d examples/hello_world.ex
+$ ./besh -d examples/hello_world.ex
 transpiler:36 {:__block__, [],
  [
    {:=, [line: 1], [{:name, [line: 1], nil}, "Hello world"]},
